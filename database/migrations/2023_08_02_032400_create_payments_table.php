@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string("payment_code");
             $table->string("service_id");
             $table->string("payment_url");
-            $table->string("user_id");
-            $table->string("status");
-            $table->string("amount");
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->boolean("status");
+            $table->integer("amount");
             $table->timestamps();
         });
     }

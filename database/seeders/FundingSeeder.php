@@ -19,8 +19,8 @@ class FundingSeeder extends Seeder
             'fund_raise_use' => 'Digunakan untuk membangun Perelatan Kopi baru ',
             'image' => 'https://freshmart.oss-ap-southeast-5.aliyuncs.com/Growup/dummy1.jpg',
             'benefit' => "+6285215125",
-            'target_amount' => 5000000,
-            'current_amount' => 10000000,
+            'target_amount' => 10000000,
+            'current_amount' =>   5000000,
             "day_left" => 15,
             "ukm_id" => 1,
             "status" => false
@@ -30,8 +30,8 @@ class FundingSeeder extends Seeder
             'fund_raise_use' => 'Digunakan untuk membeli bahan untuk kerajinan',
             'image' => 'https://freshmart.oss-ap-southeast-5.aliyuncs.com/Growup/dummy2.jpg',
             'benefit' => "+6285215125",
-            'target_amount' => 2000000,
-            'current_amount' => 9000000,
+            'target_amount' => 40000000,
+            'current_amount' => 5000000,
             "day_left" => 12,
             "ukm_id" => 2,
             "status" => false

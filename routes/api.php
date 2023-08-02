@@ -38,4 +38,4 @@ Route::group([
 );
 Route::get('fundings', [FundingController::class, 'index']);
 Route::get('funding/{id}', [FundingController::class, 'detail']);
-Route::post('pay', [FundingController::class, 'Fund']);
+Route::post ('pay', [FundingController::class, 'Fund']);
