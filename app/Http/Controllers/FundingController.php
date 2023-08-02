@@ -39,6 +39,31 @@ class FundingController extends Controller
 
     }
 
+    public  function fundManual(Request $request){
+        $validator = Validator::make($request->all(), [
+            'amount'      => 'required',
+            'funding_id'      => 'required',
+
+        ]);
+
+        //Check validasi
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $funding = Funding::where('id' , $request->funding_id)->first();
+
+        $funding->current_amount = $funding->current_amount + $request->amount;
+
+        $funding->update();
+
+
+        return response()->json([
+            'status' => true
+        ]);
+
+    }
+
 
     public function Fund(Request $request) {
 
