@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function login()
+    public function login(Request $request)
     {
         $credentials = request(['email', 'password']);
 
@@ -16,7 +16,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = User::where("email" , $request->email)->first();
+
+        return response()->json([
+            'name' => $user->name,
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+
     }
 
     public function register(Request $request) {
