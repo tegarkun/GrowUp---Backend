@@ -149,4 +149,92 @@ class FundingController extends Controller
 
 
     }
+
+    public function webHookHandler(Request $request) {
+    // Retrieve the data from the webhook payload
+    $data = $request->all();
+
+    // Extract relevant data
+    $signatureKey = $data['signature_key'];
+    $orderId = $data['order_id'];
+    $statusCode = $data['status_code'];
+    $grossAmount = $data['gross_amount'];
+    $serverKey = env('MIDTRANS_SERVER_KEY');
+
+    // Generate your signature key
+    $mySignatureKey = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+
+    // Check if the signature keys match
+    if ($signatureKey !== $mySignatureKey) {
+        return response()->json([
+            'message' => 'Invalid signature',
+            'data' => $data,
+        ], 400);
+    }
+
+    // Find the corresponding payment in your database
+    $payment = Payment::where('payment_code', $orderId)->first();
+
+    if (!$payment) {
+        return response()->json([
+            'message' => 'Payment not found',
+            'data' => $data,
+        ], 400);
+    }
+
+    // Check if the payment has already been processed
+    if ($payment->status === 1) {
+        return response()->json([
+            'message' => 'Payment already processed',
+            'data' => $data,
+        ], 400);
+    }
+
+    // Check the transaction status from Midtrans
+    $transactionStatus = $data['transaction_status'];
+    $fraudStatus = $data['fraud_status'];
+
+    // Process the transaction status accordingly
+    if ($transactionStatus == 'capture') {
+        if ($fraudStatus == 'challenge') {
+            // TODO: Set transaction status on your database to 'challenge'
+            $payment->status = 3;
+            // And respond with 200 OK
+        } else if ($fraudStatus == 'accept') {
+            // TODO: Set transaction status on your database to 'success'
+            // And respond with 200 OK
+            $payment->status = 1;
+        }
+    } else if ($transactionStatus == 'settlement') {
+        // TODO: Set transaction status on your database to 'success'
+        $payment->status = 1;
+
+        // Handle funding process
+        $transaction = Transaction::where('payment_id', $payment->id)->first();
+        $funding = Funding::find($transaction->funding_id);
+
+        // Update funding's current amount
+        $funding->current_amount = $funding->current_amount + $transaction->amount;
+        if ($funding->current_amount >= $funding->target_amount) {
+            $funding->status = 1;
+        }
+        $funding->save();
+
+        // Update payment status
+        $payment->save();
+
+        // Update transaction status
+        $transaction->status = true;
+        $transaction->save();
+    } else if (
+        $transactionStatus == 'cancel' ||
+        $transactionStatus == 'deny' ||
+        $transactionStatus == 'expire'
+    );
+
+}
+
+
+
+
 }
