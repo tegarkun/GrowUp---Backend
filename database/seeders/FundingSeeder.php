@@ -31,7 +31,7 @@ class FundingSeeder extends Seeder
             'image' => 'https://freshmart.oss-ap-southeast-5.aliyuncs.com/Growup/dummy2.jpg',
             'benefit' => "+6285215125",
             'target_amount' => 40000000,
-            'current_amount' => 5000000,
+            'current_amount' => 2000000,
             "day_left" => 12,
             "ukm_id" => 2,
             "status" => false
